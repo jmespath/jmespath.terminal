@@ -17,37 +17,52 @@ SAMPLE_JSON = {
 
 class JMESPathDisplay(object):
     PALETTE = [
-        ('input expr', 'bold', 'default', 'bold'),
+        ('input expr', 'bold', ''),
+        ('bigtext',      'white',      'black'),
     ]
 
     def __init__(self, input_data):
         self.view = None
         self.parsed_json = input_data
 
+    def _get_font_instance(self):
+        return urwid.get_all_fonts()[-2][1]()
+
     def _create_view(self):
         self.input_expr = urwid.Edit(('input expr', "JMESPath Expression: "))
-        self.status_bar = urwid.Text("JMESPath status")
-        self.header = urwid.Pile([self.input_expr, self.status_bar],
-                                 focus_item=0)
+
+        sb = urwid.BigText("JMESPath", self._get_font_instance())
+        sb = urwid.Padding(sb, 'center', None)
+        sb = urwid.AttrWrap(sb, 'bigtext')
+        sb = urwid.Filler(sb, 'top', None, 5)
+        self.status_bar = urwid.BoxAdapter(sb, 5)
+
+        div = urwid.Divider()
+        self.header = urwid.Pile([self.status_bar, self.input_expr, div, div],
+                                 focus_item=1)
         urwid.connect_signal(self.input_expr, 'change', self._on_edit)
 
         self.input_json = urwid.Text(json.dumps(self.parsed_json, indent=2))
-        self.input_json_list = [self.input_json]
+        self.section_title = urwid.Text("Input JSON")
+        self.input_json_list = [self.section_title, div, self.input_json]
         self.left_content = urwid.ListBox(self.input_json_list)
 
-        self.jmespath_result = urwid.Text("JMESPath result")
-        self.jmespath_result_list = [self.jmespath_result]
+        self.right_side_title = urwid.Text("JMESPath result")
+        self.jmespath_result = urwid.Text("")
+        self.jmespath_result_list = [self.right_side_title, div,
+                                     self.jmespath_result]
         self.right_content = urwid.ListBox(self.jmespath_result_list)
 
         self.content = urwid.Columns([self.left_content, self.right_content])
 
-        self.footer = urwid.Text("Footer")
+        self.footer = urwid.Text("Status: ")
         self.view = urwid.Frame(body=self.content, header=self.header,
                                 footer=self.footer, focus_part='header')
 
     def _on_edit(self, widget, text):
         try:
             parsed = jmespath.compile(text)
+            self.footer.set_text("Status: success")
         except Exception:
             pass
         else:
@@ -59,16 +74,17 @@ class JMESPathDisplay(object):
         self._create_view()
         self.loop = urwid.MainLoop(self.view, self.PALETTE,
                                    unhandled_input=self.unhandled_input)
+        self.loop.screen.set_terminal_properties(colors=256)
         self.loop.run()
 
     def unhandled_input(self, key):
-        if key == 'f8':
+        if key == 'f5':
             raise urwid.ExitMainLoop()
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('input_json', help='The initial input JSON file to use.')
+    parser.add_argument('-i', '--input-json', help='The initial input JSON file to use.')
 
     args = parser.parse_args()
     if args.input_json is not None:
