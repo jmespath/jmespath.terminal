@@ -63,8 +63,8 @@ class JMESPathDisplay(object):
         self.status_bar = urwid.BoxAdapter(sb, 5)
 
         div = urwid.Divider()
-        self.header = urwid.Pile([self.status_bar, self.input_expr, div, div],
-                                 focus_item=1)
+        self.header = urwid.Pile([self.status_bar, div, self.input_expr, div],
+                                 focus_item=2)
         urwid.connect_signal(self.input_expr, 'change', self._on_edit)
 
         self.input_json = urwid.Text(
@@ -89,12 +89,11 @@ class JMESPathDisplay(object):
 
     def _on_edit(self, widget, text):
         try:
-            parsed = jmespath.compile(text)
+            result = jmespath.compile(text).search(self.parsed_json)
             self.footer.set_text("Status: success")
         except Exception:
             pass
         else:
-            result = parsed.search(self.parsed_json)
             if result is not None:
                 result_markup = self._create_colorized_json(
                     json.dumps(result, indent=2))
