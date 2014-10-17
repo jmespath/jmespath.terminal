@@ -3,6 +3,8 @@ import urwid
 import jmespath
 import json
 import argparse
+import pygments.lexers
+from pygments import highlight
 
 
 SAMPLE_JSON = {
@@ -15,6 +17,21 @@ SAMPLE_JSON = {
 }
 
 
+class ConsoleJSONFormatter(object):
+    # We only need to worry about the tokens that can come
+    # from lexing JSON.
+    TOKEN_TYPES = {
+        'Token.Literal.String.Double': urwid.AttrSpec('dark green', 'default'),
+        'Token.Punctuation': urwid.AttrSpec('dark blue', 'default'),
+        'Token.Text': urwid.AttrSpec('white', 'default'),
+        'Token.Name.Tag': urwid.AttrSpec('white', 'default'),
+    }
+
+    def generate_colors(self, tokens):
+        types = self.TOKEN_TYPES
+        for token_type, token_string in tokens:
+            yield types[str(token_type)], token_string
+
 
 class JMESPathDisplay(object):
     PALETTE = [
@@ -25,6 +42,13 @@ class JMESPathDisplay(object):
     def __init__(self, input_data):
         self.view = None
         self.parsed_json = input_data
+        self.lexer = pygments.lexers.get_lexer_by_name('json')
+        self.formatter = ConsoleJSONFormatter()
+
+    def _create_colorized_json(self, json_string):
+        tokens = self.lexer.get_tokens(json_string)
+        markup = list(self.formatter.generate_colors(tokens))
+        return markup
 
     def _get_font_instance(self):
         return urwid.get_all_fonts()[-2][1]()
@@ -43,7 +67,10 @@ class JMESPathDisplay(object):
                                  focus_item=1)
         urwid.connect_signal(self.input_expr, 'change', self._on_edit)
 
-        self.input_json = urwid.Text(json.dumps(self.parsed_json, indent=2))
+        self.input_json = urwid.Text(
+            self._create_colorized_json(json.dumps(self.parsed_json,
+                                                   indent=2))
+        )
         self.input_json_list = [div, self.input_json]
         self.left_content = urwid.ListBox(self.input_json_list)
         self.left_content = urwid.LineBox(self.left_content, title='Input JSON')
@@ -69,7 +96,9 @@ class JMESPathDisplay(object):
         else:
             result = parsed.search(self.parsed_json)
             if result is not None:
-                self.jmespath_result.set_text(json.dumps(result, indent=2))
+                result_markup = self._create_colorized_json(
+                    json.dumps(result, indent=2))
+                self.jmespath_result.set_text(result_markup)
 
     def main(self):
         self._create_view()
