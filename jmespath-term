@@ -44,15 +44,15 @@ class JMESPathDisplay(object):
         urwid.connect_signal(self.input_expr, 'change', self._on_edit)
 
         self.input_json = urwid.Text(json.dumps(self.parsed_json, indent=2))
-        self.section_title = urwid.Text("Input JSON")
-        self.input_json_list = [self.section_title, div, self.input_json]
+        self.input_json_list = [div, self.input_json]
         self.left_content = urwid.ListBox(self.input_json_list)
+        self.left_content = urwid.LineBox(self.left_content, title='Input JSON')
 
-        self.right_side_title = urwid.Text("JMESPath result")
         self.jmespath_result = urwid.Text("")
-        self.jmespath_result_list = [self.right_side_title, div,
-                                     self.jmespath_result]
+        self.jmespath_result_list = [div, self.jmespath_result]
         self.right_content = urwid.ListBox(self.jmespath_result_list)
+        self.right_content = urwid.LineBox(self.right_content,
+                                           title='JMESPath Result')
 
         self.content = urwid.Columns([self.left_content, self.right_content])
 
