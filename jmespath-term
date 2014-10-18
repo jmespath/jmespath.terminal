@@ -36,7 +36,7 @@ class ConsoleJSONFormatter(object):
 class JMESPathDisplay(object):
     PALETTE = [
         ('input expr', 'black,bold', 'light gray'),
-        ('bigtext',      'white',      'dark blue'),
+        ('bigtext',      'white',      'black'),
     ]
 
     def __init__(self, input_data):
