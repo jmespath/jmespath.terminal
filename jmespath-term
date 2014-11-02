@@ -24,16 +24,26 @@ class ConsoleJSONFormatter(object):
     # We only need to worry about the tokens that can come
     # from lexing JSON.
     TOKEN_TYPES = {
+        # For the values of JSON strings.
         'Token.Literal.String.Double': urwid.AttrSpec('dark green', 'default'),
-        'Token.Punctuation': urwid.AttrSpec('dark blue', 'default'),
+        'Token.Literal.Number.Integer': urwid.AttrSpec('dark blue', 'default'),
+        'Token.Literal.Number.Float': urwid.AttrSpec('dark blue', 'default'),
+        # null, true, false
+        'Token.Keyword.Constant': urwid.AttrSpec('light blue', 'default'),
+        'Token.Punctuation': urwid.AttrSpec('light blue', 'default'),
         'Token.Text': urwid.AttrSpec('white', 'default'),
+        # Key names in a hash.
         'Token.Name.Tag': urwid.AttrSpec('white', 'default'),
+
     }
+    # Used when the token name is not in the list above.
+    DEFAULT_COLOR = urwid.AttrSpec('light blue', 'default'),
 
     def generate_colors(self, tokens):
         types = self.TOKEN_TYPES
+        default = self.DEFAULT_COLOR
         for token_type, token_string in tokens:
-            yield types[str(token_type)], token_string
+            yield types.get(str(token_type), default), token_string
 
 
 class JMESPathDisplay(object):
