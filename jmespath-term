@@ -9,11 +9,14 @@ from pygments import highlight
 
 SAMPLE_JSON = {
     'a': 'foo',
-    'b': 'bar',
+    'b': 2,
     'c': {
         'd': 'baz',
         'e': [1,2,3]
-    }
+    },
+    "d": True,
+    "e": None,
+    "f": 1.1
 }
 
 
