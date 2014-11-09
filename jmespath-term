@@ -124,6 +124,12 @@ class JMESPathDisplay(object):
     def unhandled_input(self, key):
         if key == 'f5':
             raise urwid.ExitMainLoop()
+        if key == 'ctrl ]':
+            # Keystroke to quickly empty out the
+            # currently entered expression.  Avoids
+            # having to hold backspace to delete
+            # the current expression current expression.
+            self.input_expr.edit_text = ''
 
 
 def main():
