@@ -4,7 +4,6 @@ import argparse
 import urwid
 import jmespath
 import pygments.lexers
-from pygments import highlight
 
 
 SAMPLE_JSON = {
@@ -12,7 +11,7 @@ SAMPLE_JSON = {
     'b': 2,
     'c': {
         'd': 'baz',
-        'e': [1,2,3]
+        'e': [1, 2, 3]
     },
     "d": True,
     "e": None,
@@ -47,9 +46,10 @@ class ConsoleJSONFormatter(object):
 
 
 class JMESPathDisplay(object):
+
     PALETTE = [
         ('input expr', 'black,bold', 'light gray'),
-        ('bigtext',      'white',      'black'),
+        ('bigtext', 'white', 'black'),
     ]
 
     def __init__(self, input_data):
@@ -79,7 +79,7 @@ class JMESPathDisplay(object):
         self.header = urwid.Pile(
             [self.status_bar, div,
              urwid.AttrMap(self.input_expr, 'input expr'), div],
-             focus_item=2)
+            focus_item=2)
         urwid.connect_signal(self.input_expr, 'change', self._on_edit)
 
         self.input_json = urwid.Text(
@@ -88,7 +88,8 @@ class JMESPathDisplay(object):
         )
         self.input_json_list = [div, self.input_json]
         self.left_content = urwid.ListBox(self.input_json_list)
-        self.left_content = urwid.LineBox(self.left_content, title='Input JSON')
+        self.left_content = urwid.LineBox(self.left_content,
+                                          title='Input JSON')
 
         self.jmespath_result = urwid.Text("")
         self.jmespath_result_list = [div, self.jmespath_result]
@@ -134,7 +135,8 @@ class JMESPathDisplay(object):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--input-json', help='The initial input JSON file to use.')
+    parser.add_argument('-i', '--input-json',
+                        help='The initial input JSON file to use.')
 
     args = parser.parse_args()
     if args.input_json is not None:
