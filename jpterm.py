@@ -140,6 +140,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--input-json',
                         help='The initial input JSON file to use.')
+    parser.add_argument('--version', action='version',
+                        version='jmespath-term %s' % __version__)
 
     args = parser.parse_args()
     if args.input_json is not None:
