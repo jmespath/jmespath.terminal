@@ -1,7 +1,8 @@
-import urwid
-import jmespath
 import json
 import argparse
+
+import urwid
+import jmespath
 import pygments.lexers
 from pygments import highlight
 
