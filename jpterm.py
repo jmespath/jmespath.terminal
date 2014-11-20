@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import urwid
 import jmespath
 import json
