@@ -6,6 +6,9 @@ import jmespath
 import pygments.lexers
 
 
+__version__ = '0.0.1'
+
+
 SAMPLE_JSON = {
     'a': 'foo',
     'b': 2,
