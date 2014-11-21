@@ -145,7 +145,10 @@ def main():
 
     args = parser.parse_args()
     if args.input_json is not None:
-        input_json = json.load(open(args.input_json))
+        if args.input_json == '-':
+            input_json = json.loads(sys.stdin.read())
+        else:
+            input_json = json.load(open(args.input_json))
     else:
         input_json = SAMPLE_JSON
 
