@@ -15,7 +15,7 @@ requires = [
 
 setup(
     name='jmespath-terminal',
-    version='0.0.1',
+    version='0.1.0',
     description='JMESPath Terminal',
     long_description=io.open('README.rst', encoding='utf-8').read(),
     author='James Saryerwinnie',
