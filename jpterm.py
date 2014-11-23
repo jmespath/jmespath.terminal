@@ -138,6 +138,7 @@ class JMESPathDisplay(object):
             # having to hold backspace to delete
             # the current expression current expression.
             self.input_expr.edit_text = ''
+            self.jmespath_result.set_text('')
 
 
 def _load_input_json(filename):
