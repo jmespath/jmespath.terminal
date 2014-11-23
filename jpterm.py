@@ -8,7 +8,7 @@ import jmespath
 import pygments.lexers
 
 
-__version__ = '0.0.1'
+__version__ = '0.1.0'
 
 
 SAMPLE_JSON = {
@@ -153,13 +153,15 @@ def main():
     if input_json is not None:
         if input_json == '-':
             input_json = json.loads(sys.stdin.read())
-            # Once we've read from stdin we can reset it back
-            # to its original value.
-            sys.stdin = open(os.ctermid(), 'r')
         else:
             input_json = json.load(open(input_json))
     else:
         input_json = SAMPLE_JSON
+
+    if not os.isatty(sys.stdin.fileno()):
+        # If stdin is a pipe, we need to reset
+        # this back to the controlling tty.
+        sys.stdin = open(os.ctermid(), 'r')
 
     screen = urwid.raw_display.Screen()
     display = JMESPathDisplay(input_json)
