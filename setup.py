@@ -21,7 +21,7 @@ setup(
     author='James Saryerwinnie',
     author_email='js@jamesls.com',
     url='https://github.com/jmespath/jmespath.terminal',
-    scripts=['bin/jmespath-term'],
+    scripts=['bin/jpterm'],
     py_modules=['jpterm'],
     install_requires=requires,
     classifiers=(
