@@ -6,6 +6,10 @@ JMESPath, in your terminal!
 
 .. image:: https://cloud.githubusercontent.com/assets/368057/5158769/6546e58a-72fe-11e4-8ceb-ba866777983e.gif
 
+
+Overview
+========
+
 JMESPath is an expression language for manipulating JSON documents.  If you've
 never heard of JMESPath before, you write a JMESPath expression that when
 applied to an input JSON document will produces an output JSON document based
@@ -19,11 +23,15 @@ by creating your own JMESPath expressions.  The JMESPath Terminal
 makes it easy to see the results of your JMESPath expressions immediately
 as you type.
 
-To use, you can install via pip::
+
+Getting Started
+===============
+
+You can install the JMESPath Terminal via pip::
 
   $ pip install jmespath-term
 
-Then run up the ``jpterm`` program::
+There will then be a ``jpterm`` program you can run::
 
   $ jpterm
 
@@ -44,6 +52,9 @@ You can also pipe an input JSON document into the
 To quit the program, press ``F5``.
 You can also clear the current expression by specifying
 ``Ctrl + ]``.
+
+Working on JMESPath Terminal
+============================
 
 If you like to work on jmespath-terminal to add new features,
 you can first create and activate a new virtual environment::
