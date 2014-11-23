@@ -7,13 +7,14 @@ via pip::
 
   $ pip install jmespath-term
 
-Then run up the jmespath-term program::
+Then run up the ``jpterm`` program::
 
-  $ jmespath-term
+  $ jpterm
 
-You can also specify an initial JSON document to use::
+You can also specify an initial JSON document to use
+by specifying the JSON file as a positional argument::
 
-  $ jmespath-term -i /tmp/somejsondoc.json
+  $ jpterm /tmp/somejsondoc.json
 
 To quit the program, press ``F5``.
 You can also clear the current expression by specifying
@@ -30,7 +31,7 @@ Then install the module::
     $ pip install -e .
 
 You'll now be able to modify the ``jpterm.py`` module and see
-your changes reflected when you run the ``jmespath-term`` command.
+your changes reflected when you run the ``jpterm`` command.
 
 Beta Status
 ===========
