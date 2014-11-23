@@ -2,8 +2,24 @@
 JMESPath Terminal
 =================
 
-JMESPath, in your terminal!  To use, you can install
-via pip::
+JMESPath, in your terminal!
+
+.. image:: https://cloud.githubusercontent.com/assets/368057/5158769/6546e58a-72fe-11e4-8ceb-ba866777983e.gif
+
+JMESPath is an expression language for manipulating JSON documents.  If you've
+never heard of JMESPath before, you write a JMESPath expression that when
+applied to an input JSON document will produces an output JSON document based
+on the expression you've provided.
+
+You can check out the `JMESPath site
+<http://jmespath.org>`__ for more information.
+
+One of the best ways to learn the JMESPath language is to experiment
+by creating your own JMESPath expressions.  The JMESPath Terminal
+makes it easy to see the results of your JMESPath expressions immediately
+as you type.
+
+To use, you can install via pip::
 
   $ pip install jmespath-term
 
@@ -11,10 +27,19 @@ Then run up the ``jpterm`` program::
 
   $ jpterm
 
+With no arguments specified, a sample JSON document is used as
+input.
+
 You can also specify an initial JSON document to use
 by specifying the JSON file as a positional argument::
 
   $ jpterm /tmp/somejsondoc.json
+
+You can also pipe an input JSON document into the
+``jpterm`` command:
+
+.. image:: https://cloud.githubusercontent.com/assets/368057/5158770/6a6afb6e-72fe-11e4-8be3-893edf21920e.gif
+
 
 To quit the program, press ``F5``.
 You can also clear the current expression by specifying
