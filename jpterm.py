@@ -1,3 +1,4 @@
+"""JMESPath text terminal."""
 import os
 import sys
 import json
@@ -140,7 +141,7 @@ class JMESPathDisplay(object):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('input-json', nargs='?',
                         help='The initial input JSON file to use. '
                         'If this value is not provided, a sample '
