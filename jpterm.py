@@ -151,16 +151,15 @@ def main():
     args = parser.parse_args()
     input_json = getattr(args, 'input-json', None)
     if input_json is not None:
-        if input_json == '-':
-            input_json = json.loads(sys.stdin.read())
-        else:
-            input_json = json.load(open(input_json))
+        with open(input_json) as f:
+            input_json = json.load(f)
     else:
         input_json = SAMPLE_JSON
 
     if not os.isatty(sys.stdin.fileno()):
-        # If stdin is a pipe, we need to reset
-        # this back to the controlling tty.
+        # If stdin is a pipe, we need read the JSON from
+        #stdin and then reset stdin this back to the controlling tty.
+        input_json = json.loads(sys.stdin.read())
         sys.stdin = open(os.ctermid(), 'r')
 
     screen = urwid.raw_display.Screen()
