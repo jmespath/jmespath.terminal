@@ -155,6 +155,7 @@ def _load_input_json(filename):
         # document so they can still try out the
         # JMESPath Terminal.
         input_json = SAMPLE_JSON
+    return input_json
 
 
 def main():
