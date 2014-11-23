@@ -110,6 +110,12 @@ class JMESPathDisplay(object):
                                 footer=self.footer, focus_part='header')
 
     def _on_edit(self, widget, text):
+        if not text:
+            # If a user has hit backspace until there's no expression
+            # left, we can exit early and just clear the result text
+            # panel.
+            self.jmespath_result.set_text('')
+            return
         try:
             result = jmespath.compile(text).search(self.parsed_json)
             self.footer.set_text("Status: success")
