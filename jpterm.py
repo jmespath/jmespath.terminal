@@ -140,6 +140,23 @@ class JMESPathDisplay(object):
             self.input_expr.edit_text = ''
 
 
+def _load_input_json(filename):
+    if filename is not None:
+        with open(filename) as f:
+            input_json = json.load(f)
+    elif not os.isatty(sys.stdin.fileno()):
+        # If stdin is a pipe, we need read the JSON from
+        # stdin and then reset stdin this back to the controlling tty.
+        input_json = json.loads(sys.stdin.read())
+        sys.stdin = open(os.ctermid(), 'r')
+    else:
+        # If the user didn't provide a filename,
+        # we want to be helpful so we'll use a sample
+        # document so they can still try out the
+        # JMESPath Terminal.
+        input_json = SAMPLE_JSON
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('input-json', nargs='?',
@@ -150,23 +167,17 @@ def main():
                         version='jmespath-term %s' % __version__)
 
     args = parser.parse_args()
-    input_json = getattr(args, 'input-json', None)
-    if input_json is not None:
-        with open(input_json) as f:
-            input_json = json.load(f)
-    else:
-        input_json = SAMPLE_JSON
-
-    if not os.isatty(sys.stdin.fileno()):
-        # If stdin is a pipe, we need read the JSON from
-        #stdin and then reset stdin this back to the controlling tty.
-        input_json = json.loads(sys.stdin.read())
-        sys.stdin = open(os.ctermid(), 'r')
+    try:
+        input_json = _load_input_json(getattr(args, 'input-json', None))
+    except ValueError as e:
+        sys.stderr.write("Unable to load the input JSON: %s\n\n" % e)
+        return 1
 
     screen = urwid.raw_display.Screen()
     display = JMESPathDisplay(input_json)
     display.main(screen=screen)
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
