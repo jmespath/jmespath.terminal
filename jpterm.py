@@ -1,3 +1,5 @@
+import os
+import sys
 import json
 import argparse
 
@@ -118,10 +120,11 @@ class JMESPathDisplay(object):
                     json.dumps(result, indent=2))
                 self.jmespath_result.set_text(result_markup)
 
-    def main(self):
+    def main(self, screen=None):
         self._create_view()
         self.loop = urwid.MainLoop(self.view, self.PALETTE,
-                                   unhandled_input=self.unhandled_input)
+                                   unhandled_input=self.unhandled_input,
+                                   screen=screen)
         self.loop.screen.set_terminal_properties(colors=256)
         self.loop.run()
 
@@ -138,22 +141,29 @@ class JMESPathDisplay(object):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--input-json',
-                        help='The initial input JSON file to use.')
+    parser.add_argument('input-json', nargs='?',
+                        help='The initial input JSON file to use. '
+                        'If this value is not provided, a sample '
+                        'JSON document will be provided.')
     parser.add_argument('--version', action='version',
                         version='jmespath-term %s' % __version__)
 
     args = parser.parse_args()
-    if args.input_json is not None:
-        if args.input_json == '-':
+    input_json = getattr(args, 'input-json', None)
+    if input_json is not None:
+        if input_json == '-':
             input_json = json.loads(sys.stdin.read())
+            # Once we've read from stdin we can reset it back
+            # to its original value.
+            sys.stdin = open(os.ctermid(), 'r')
         else:
-            input_json = json.load(open(args.input_json))
+            input_json = json.load(open(input_json))
     else:
         input_json = SAMPLE_JSON
 
+    screen = urwid.raw_display.Screen()
     display = JMESPathDisplay(input_json)
-    display.main()
+    display.main(screen=screen)
 
 
 if __name__ == '__main__':
