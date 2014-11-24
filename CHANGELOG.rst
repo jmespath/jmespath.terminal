@@ -1,3 +1,10 @@
+0.1.1
+=====
+
+* Add better error message when invalid input JSOn is provided
+* Add support for saving/printing expressions using "Ctrl p"
+
+
 0.1.0
 =====
 
