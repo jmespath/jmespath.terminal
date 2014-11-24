@@ -63,6 +63,7 @@ class JMESPathDisplay(object):
         self.parsed_json = input_data
         self.lexer = pygments.lexers.get_lexer_by_name('json')
         self.formatter = ConsoleJSONFormatter()
+        self.saved_expressions = []
 
     def _create_colorized_json(self, json_string):
         tokens = self.lexer.get_tokens(json_string)
@@ -138,13 +139,20 @@ class JMESPathDisplay(object):
     def unhandled_input(self, key):
         if key == 'f5':
             raise urwid.ExitMainLoop()
-        if key == 'ctrl ]':
+        elif key == 'ctrl ]':
             # Keystroke to quickly empty out the
             # currently entered expression.  Avoids
             # having to hold backspace to delete
             # the current expression current expression.
             self.input_expr.edit_text = ''
             self.jmespath_result.set_text('')
+        elif key == 'ctrl p':
+            self.saved_expressions.append(self.input_expr.edit_text)
+            self.footer.set_text("Status: expression saved")
+
+    def display_saved_expressions(self):
+        for expression in self.saved_expressions:
+            print(expression)
 
 
 def _load_input_json(filename):
@@ -184,6 +192,7 @@ def main():
     screen = urwid.raw_display.Screen()
     display = JMESPathDisplay(input_json)
     display.main(screen=screen)
+    display.display_saved_expressions()
     return 0
 
 
