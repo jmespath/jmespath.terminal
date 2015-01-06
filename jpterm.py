@@ -64,6 +64,8 @@ class JMESPathDisplay(object):
         self.lexer = pygments.lexers.get_lexer_by_name('json')
         self.formatter = ConsoleJSONFormatter()
         self.saved_expressions = []
+        self._latest_search_result = None
+        self._last_saved_search_result = None
 
     def _create_colorized_json(self, json_string):
         tokens = self.lexer.get_tokens(json_string)
@@ -119,6 +121,7 @@ class JMESPathDisplay(object):
             return
         try:
             result = jmespath.compile(text).search(self.parsed_json)
+            self._latest_search_result = result
             self.footer.set_text("Status: success")
         except Exception:
             pass
@@ -149,10 +152,18 @@ class JMESPathDisplay(object):
         elif key == 'ctrl p':
             self.saved_expressions.append(self.input_expr.edit_text)
             self.footer.set_text("Status: expression saved")
+        elif key == 'ctrl r':
+            if self._latest_search_result is not None:
+                self._last_saved_search_result = self._latest_search_result
+                self.footer.set_text("Status: result saved")
 
     def display_saved_expressions(self):
         for expression in self.saved_expressions:
-            print(expression)
+            sys.__stdout__.write(expression)
+            sys.__stdout__.write('\n')
+        if self._last_saved_search_result is not None:
+            sys.__stdout__.write(json.dumps(self._last_saved_search_result, indent=2))
+            sys.__stdout__.write('\n')
 
 
 def _load_input_json(filename):
@@ -173,6 +184,14 @@ def _load_input_json(filename):
     return input_json
 
 
+def switch_out_stdout():
+    if not os.isatty(sys.stdout.fileno()):
+        # If stdout is a pipe, then swap out the current stdout
+        # for the controlling tty.  That way we can pipe
+        # the output of this command.
+        sys.stdout = open(os.ctermid(), 'w')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('input-json', nargs='?',
@@ -189,6 +208,7 @@ def main():
         sys.stderr.write("Unable to load the input JSON: %s\n\n" % e)
         return 1
 
+    switch_out_stdout()
     screen = urwid.raw_display.Screen()
     display = JMESPathDisplay(input_json)
     display.main(screen=screen)
