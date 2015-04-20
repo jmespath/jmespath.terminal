@@ -48,10 +48,31 @@ You can also pipe an input JSON document into the
 
 .. image:: https://cloud.githubusercontent.com/assets/368057/5158770/6a6afb6e-72fe-11e4-8be3-893edf21920e.gif
 
+Keyboard Shortcuts
+__________________
+``F5``
+    | Quit the program.
+``Ctrl + p``
+    | Save the current expression so that it is output on quit.
+    | (Multiple expressions can be saved and each is output on its own line.
+``Ctrl + ]``
+    | Clear the current expression.
 
-To quit the program, press ``F5``.
-You can also clear the current expression by specifying
-``Ctrl + ]``.
+Mouse Clicks
+____________
+NOTE: These features are dependent on terminal support. (The Terminal.app
+included in Mac OS X does not support this, but `iTerm2 <http://iterm2.com/>`_
+does.)
+
+One feature of the Urwid Python package (which jmespath-terminal is built on)
+is that mouse clicks are recognized. This allows you to click to switch focus
+on either the Input or Result window (and of course back to the Expression) and
+scroll it.
+
+This can make it difficult to select text for copying/pasting. Many Linux
+terminals will allow you to select the text with a ``Shift + click/drag`` and
+copy it with ``Shift + Ctrl + c``. In iTerm2 selections can be made with
+``Opt/Alt + click/drag``.
 
 Working on JMESPath Terminal
 ============================
