@@ -50,7 +50,7 @@ You can also pipe an input JSON document into the
 
 Keyboard Shortcuts
 __________________
-``F5``
+``F5 or Ctrl + c``
     | Quit the program.
 ``Ctrl + p``
     | Save the current expression so that it is output on quit.
