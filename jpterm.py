@@ -162,7 +162,8 @@ class JMESPathDisplay(object):
             self.footer.set_text("Status: output mode set to %s" % new_mode)
 
     def display_output(self):
-        if self.output_mode == 'result':
+        if self.output_mode == 'result' and \
+                self.last_result is not None:
             print(json.dumps(self.last_result, indent=2))
         elif self.output_mode == 'expression' and \
                 self.last_expression is not None:
