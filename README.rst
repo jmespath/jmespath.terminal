@@ -48,18 +48,39 @@ You can also pipe an input JSON document into the
 
 .. image:: https://cloud.githubusercontent.com/assets/368057/5158770/6a6afb6e-72fe-11e4-8be3-893edf21920e.gif
 
+Output
+------
+
+When the ``jpterm`` program exits (via ``F5`` or ``Ctrl-c``), ``jpterm`` may
+write content to stdout depending on the output mode.  There are three output
+modes:
+
+* result - Whatever is in the "JMESPath result" pane (the right hand side) will
+  be printed to stdout.
+* expression - Whatever is in the "JMESPath expression" pane is printed to
+  stdout.
+* nothing - Nothing is written to stdout when exiting.
+
+The default mode is "result", which means that by default, whatever is in the
+result pane will be printed to stdout when ``jpterm`` exits.  You can switch
+output modes using ``Ctrl-p``, which will cycle through the three modes above.
+You can also specify what mode to use when starting the ``jpterm`` command
+using the ``-m/--output-mode`` command line option.
+
 Keyboard Shortcuts
-__________________
+------------------
+
 ``F5 or Ctrl + c``
     | Quit the program.
 ``Ctrl + p``
-    | Save the current expression so that it is output on quit.
-    | (Multiple expressions can be saved and each is output on its own line.
+    | Output mode toggle.  Toggle between outputting the current result,
+    | expression, or nothing.  This is discussed in the "Output" section above.
 ``Ctrl + ]``
     | Clear the current expression.
 
 Mouse Clicks
-____________
+------------
+
 NOTE: These features are dependent on terminal support. (The Terminal.app
 included in Mac OS X does not support this, but `iTerm2 <http://iterm2.com/>`_
 does.)
