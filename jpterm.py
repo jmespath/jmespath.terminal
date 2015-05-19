@@ -191,7 +191,10 @@ def main():
 
     screen = urwid.raw_display.Screen()
     display = JMESPathDisplay(input_json)
-    display.main(screen=screen)
+    try:
+        display.main(screen=screen)
+    except KeyboardInterrupt:
+        pass
     display.display_saved_expressions()
     return 0
 
