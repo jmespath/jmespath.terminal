@@ -23,6 +23,11 @@ SAMPLE_JSON = {
     "e": None,
     "f": 1.1
 }
+OUTPUT_MODES = [
+    'result',
+    'expression',
+    'quiet',
+]
 
 
 class ConsoleJSONFormatter(object):
@@ -58,12 +63,14 @@ class JMESPathDisplay(object):
         ('bigtext', 'white', 'black'),
     ]
 
-    def __init__(self, input_data):
+    def __init__(self, input_data, output_mode='result'):
         self.view = None
         self.parsed_json = input_data
         self.lexer = pygments.lexers.get_lexer_by_name('json')
         self.formatter = ConsoleJSONFormatter()
-        self.saved_expressions = []
+        self.output_mode = output_mode
+        self.last_result = None
+        self.last_expression = None
 
     def _create_colorized_json(self, json_string):
         tokens = self.lexer.get_tokens(json_string)
@@ -111,6 +118,7 @@ class JMESPathDisplay(object):
                                 footer=self.footer, focus_part='header')
 
     def _on_edit(self, widget, text):
+        self.last_expression = text
         if not text:
             # If a user has hit backspace until there's no expression
             # left, we can exit early and just clear the result text
@@ -124,6 +132,7 @@ class JMESPathDisplay(object):
             pass
         else:
             if result is not None:
+                self.last_result = result
                 result_markup = self._create_colorized_json(
                     json.dumps(result, indent=2))
                 self.jmespath_result.set_text(result_markup)
@@ -147,12 +156,19 @@ class JMESPathDisplay(object):
             self.input_expr.edit_text = ''
             self.jmespath_result.set_text('')
         elif key == 'ctrl p':
-            self.saved_expressions.append(self.input_expr.edit_text)
-            self.footer.set_text("Status: expression saved")
+            new_mode = OUTPUT_MODES[
+                (OUTPUT_MODES.index(self.output_mode) + 1) % len(OUTPUT_MODES)]
+            self.output_mode = new_mode
+            self.footer.set_text("Status: output mode set to %s" % new_mode)
 
-    def display_saved_expressions(self):
-        for expression in self.saved_expressions:
-            print(expression)
+    def display_output(self):
+        if self.output_mode == 'result' and \
+                self.last_result is not None:
+            print(json.dumps(self.last_result, indent=2))
+        elif self.output_mode == 'expression' and \
+                self.last_expression is not None:
+            print(self.last_expression)
+        # If the output_mode is 'quiet' then we don't need to print anything.
 
 
 def _load_input_json(filename):
@@ -179,6 +195,12 @@ def main():
                         help='The initial input JSON file to use. '
                         'If this value is not provided, a sample '
                         'JSON document will be provided.')
+    parser.add_argument('-m', '--output-mode',
+                        choices=OUTPUT_MODES,
+                        default='result',
+                        help="Specify what's printed to stdout "
+                        "when jpterm exits. This can also be changed "
+                        "when jpterm is running using Ctrl-o")
     parser.add_argument('--version', action='version',
                         version='jmespath-term %s' % __version__)
 
@@ -190,12 +212,12 @@ def main():
         return 1
 
     screen = urwid.raw_display.Screen()
-    display = JMESPathDisplay(input_json)
+    display = JMESPathDisplay(input_json, args.output_mode)
     try:
         display.main(screen=screen)
     except KeyboardInterrupt:
         pass
-    display.display_saved_expressions()
+    display.display_output()
     return 0
 
 
