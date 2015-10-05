@@ -161,14 +161,21 @@ class JMESPathDisplay(object):
             self.output_mode = new_mode
             self.footer.set_text("Status: output mode set to %s" % new_mode)
 
-    def display_output(self):
+    def display_output(self, filename):
         if self.output_mode == 'result' and \
                 self.last_result is not None:
-            print(json.dumps(self.last_result, indent=2))
+            result = json.dumps(self.last_result, indent=2)
         elif self.output_mode == 'expression' and \
                 self.last_expression is not None:
-            print(self.last_expression)
-        # If the output_mode is 'quiet' then we don't need to print anything.
+            result = self.last_expression
+        else:
+            # If the output_mode is 'quiet' then we don't need to print anything.
+            return
+        if filename is not None:
+            with open(filename, 'w') as f:
+                f.write(result)
+        else:
+            sys.stdout.write(result)
 
 
 def _load_input_json(filename):
@@ -201,6 +208,11 @@ def main():
                         help="Specify what's printed to stdout "
                         "when jpterm exits. This can also be changed "
                         "when jpterm is running using Ctrl-o")
+    parser.add_argument('-o', '--output-file',
+                        help="By default, the output is printed "
+                        "to stdout when jpterm exits.  You can "
+                        "instead direct the output to a file using "
+                        "the -o/--ouput-file option.")
     parser.add_argument('--version', action='version',
                         version='jmespath-term %s' % __version__)
 
@@ -217,7 +229,7 @@ def main():
         display.main(screen=screen)
     except KeyboardInterrupt:
         pass
-    display.display_output()
+    display.display_output(args.output_file)
     return 0
 
 
