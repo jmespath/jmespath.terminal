@@ -1,10 +1,15 @@
+0.2.2
+=====
+
+* Use OrderedDict to retain key order from expression
+  in output.
+
 0.2.1
 =====
 
 * Add an ``-o|--output-file`` option that allows you to
   control where the final output is written.
 * Relax pygments version constraint.
-
 
 0.2.0
 =====
