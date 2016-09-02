@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 
 requires = [
-    'jmespath>=0.4.1,<=1.0.0',
+    'jmespath>=0.8.0,<=1.0.0',
     'Pygments>=2.0,<3.0',
     'urwid==1.2.2'
 ]
@@ -15,7 +15,7 @@ requires = [
 
 setup(
     name='jmespath-terminal',
-    version='0.2.1',
+    version='0.2.2',
     description='JMESPath Terminal',
     long_description=io.open('README.rst', encoding='utf-8').read(),
     author='James Saryerwinnie',

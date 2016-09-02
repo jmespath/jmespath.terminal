@@ -7,9 +7,10 @@ import argparse
 import urwid
 import jmespath
 import pygments.lexers
+import collections
 
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 
 SAMPLE_JSON = {
@@ -126,7 +127,8 @@ class JMESPathDisplay(object):
             self.jmespath_result.set_text('')
             return
         try:
-            result = jmespath.compile(text).search(self.parsed_json)
+            options = jmespath.Options(dict_cls=collections.OrderedDict)
+            result = jmespath.compile(text).search(self.parsed_json, options)
             self.footer.set_text("Status: success")
         except Exception:
             pass
