@@ -42,9 +42,9 @@ class ConsoleJSONFormatter(object):
         # null, true, false
         'Token.Keyword.Constant': urwid.AttrSpec('light blue', 'default'),
         'Token.Punctuation': urwid.AttrSpec('light blue', 'default'),
-        'Token.Text': urwid.AttrSpec('white', 'default'),
+        'Token.Text': None,
         # Key names in a hash.
-        'Token.Name.Tag': urwid.AttrSpec('white', 'default'),
+        'Token.Name.Tag': None
 
     }
     # Used when the token name is not in the list above.
