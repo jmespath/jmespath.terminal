@@ -4,6 +4,13 @@ import sys
 import json
 import argparse
 
+try:
+    import yaml
+    from yaml import Loader
+    __enable_yaml__ = True
+except ImportError:
+    __enable_yaml__ = False
+
 import urwid
 import jmespath
 import pygments.lexers
@@ -13,7 +20,7 @@ import collections
 __version__ = '0.2.2'
 
 
-SAMPLE_JSON = {
+SAMPLE_INPUT = {
     'a': 'foo',
     'b': 2,
     'c': {
@@ -181,6 +188,7 @@ class JMESPathDisplay(object):
 
 
 def _load_input_json(filename):
+    input_json = None
     if filename is not None:
         with open(filename) as f:
             input_json = json.load(f)
@@ -189,19 +197,30 @@ def _load_input_json(filename):
         # stdin and then reset stdin this back to the controlling tty.
         input_json = json.loads(sys.stdin.read())
         sys.stdin = open(os.ctermid(), 'r')
-    else:
-        # If the user didn't provide a filename,
-        # we want to be helpful so we'll use a sample
-        # document so they can still try out the
-        # JMESPath Terminal.
-        input_json = SAMPLE_JSON
+
     return input_json
+
+
+def _load_input_yaml(filename):
+    if not __enable_yaml__:
+        raise ImportError("PyYAML is required for yaml loading")
+    input_yaml = None
+    if filename is not None:
+        with open(filename) as f:
+            input_yaml = yaml.load(f, Loader=Loader)
+    elif not os.isatty(sys.stdin.fileno()):
+        # If stdin is a pipe, we need read the JSON from
+        # stdin and then reset stdin this back to the controlling tty.
+        input_yaml = yaml.load(sys.stdin.read(), Loader=Loader)
+        sys.stdin = open(os.ctermid(), 'r')
+
+    return input_yaml
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('input-json', nargs='?',
-                        help='The initial input JSON file to use. '
+    parser.add_argument('input-file', nargs='?',
+                        help='The initial input JSON or YAML file to use. '
                         'If this value is not provided, a sample '
                         'JSON document will be provided.')
     parser.add_argument('-m', '--output-mode',
@@ -217,16 +236,33 @@ def main():
                         "the -o/--ouput-file option.")
     parser.add_argument('--version', action='version',
                         version='jmespath-term %s' % __version__)
+    parser.add_argument('-y', '--yaml',
+                        default=False,
+                        action='store_true',
+                        help="Load input as YAML")
 
     args = parser.parse_args()
     try:
-        input_json = _load_input_json(getattr(args, 'input-json', None))
+        if args.yaml:
+            input_data = _load_input_yaml(getattr(args, 'input-file', None))
+        else:
+            input_data = _load_input_json(getattr(args, 'input-file', None))
+    except ImportError as e:
+        sys.stderr.write(str(e))
+        return 1
     except ValueError as e:
-        sys.stderr.write("Unable to load the input JSON: %s\n\n" % e)
+        sys.stderr.write("Unable to load the input file: %s\n\n" % e)
         return 1
 
+    # If the user didn't provide a filename,
+    # we want to be helpful so we'll use a sample
+    # document so they can still try out the
+    # JMESPath Terminal.
+    if input_data is None:
+        input_data = SAMPLE_INPUT
+
     screen = urwid.raw_display.Screen()
-    display = JMESPathDisplay(input_json, args.output_mode)
+    display = JMESPathDisplay(input_data, args.output_mode)
     try:
         display.main(screen=screen)
     except KeyboardInterrupt:
