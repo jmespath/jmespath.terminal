@@ -124,20 +124,24 @@ class JMESPathDisplay(object):
             # If a user has hit backspace until there's no expression
             # left, we can exit early and just clear the result text
             # panel.
-            self.jmespath_result.set_text('')
+            self.jmespath_result.set_text('Enter an expression')
+            self.footer.set_text("")
             return
         try:
             options = jmespath.Options(dict_cls=collections.OrderedDict)
             result = jmespath.compile(text).search(self.parsed_json, options)
             self.footer.set_text("Status: success")
         except Exception:
-            pass
+            self.footer.set_text("Status: error")
+            self.jmespath_result.set_text('Compile error')
         else:
             if result is not None:
                 self.last_result = result
                 result_markup = self._create_colorized_json(
                     json.dumps(result, indent=2))
                 self.jmespath_result.set_text(result_markup)
+            else:
+                self.jmespath_result.set_text('Nothing to display')
 
     def main(self, screen=None):
         self._create_view()
