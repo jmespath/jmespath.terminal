@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 requires = [
     'jmespath>=0.8.0,<=1.0.0',
     'Pygments>=2.0,<3.0',
-    'urwid==1.2.2'
+    'urwid==2.1.2'
 ]
 
 
