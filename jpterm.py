@@ -225,7 +225,14 @@ def main():
         sys.stderr.write("Unable to load the input JSON: %s\n\n" % e)
         return 1
 
-    screen = urwid.raw_display.Screen()
+    # Explicitly pass sys.stdin here rather than relying on
+    # urwid.raw_display.Screen's default argument.  That default is
+    # bound to sys.stdin at import time, which is the piped input
+    # (already exhausted) when JSON is piped into jpterm.  By the time
+    # we get here, _load_input_json() has reassigned sys.stdin to the
+    # controlling tty, so we need to pass it in explicitly to avoid
+    # urwid trying to read keyboard input from the closed pipe.
+    screen = urwid.raw_display.Screen(input=sys.stdin)
     display = JMESPathDisplay(input_json, args.output_mode)
     try:
         display.main(screen=screen)
