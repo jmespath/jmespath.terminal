@@ -224,6 +224,9 @@ def main():
     except ValueError as e:
         sys.stderr.write("Unable to load the input JSON: %s\n\n" % e)
         return 1
+    except OSError as e:
+        sys.stderr.write("Unable to load the input JSON: %s\n\n" % e)
+        return 1
 
     screen = urwid.raw_display.Screen()
     display = JMESPathDisplay(input_json, args.output_mode)
